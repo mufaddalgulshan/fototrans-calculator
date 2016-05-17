@@ -1,0 +1,126 @@
+<!--Toolbar-->
+<ion-toolbar primary>
+
+  <!--Title-->
+  <ion-title>Fototrans Calculator</ion-title>
+
+  <!--Settings-->
+  <ion-buttons [hidden]="!isLoggedIn" end>
+    <button royal [navPush]="settingsPage">
+    <ion-icon name="settings"></ion-icon>
+    </button>
+  </ion-buttons>
+
+</ion-toolbar>
+
+<!--Content-->
+<ion-content class="home">
+
+  <!--spacer-->
+  <br/><br/>
+
+  <!--Logo-->
+  <div padding-left>
+    <img src="img/logo.png" />
+  </div>
+
+  <!--spacer-->
+  <br/><br/>
+
+  <!--spacer-->
+  <br/><br/>
+
+  <button [hidden]="isLoggedIn" (click)="authWithGoogle()" full>Sign in with Google</button>
+
+  <form [hidden]="!isLoggedIn" [ngFormModel]="calculatorForm" (ngSubmit)="onSubmit(calculatorForm.value)">
+
+    <!--Height-->
+    <ion-item>
+      <ion-label>Height</ion-label>
+      <ion-input type="text" value="" [ngFormControl]="height"></ion-input>
+    </ion-item>
+    <div *ngIf="height.hasError('required') && height.touched" class="error-box" padding-left>* Height is required!</div>
+    <div *ngIf="height.hasError('pattern') && height.touched" class="error-box" padding-left>* Minimum height length is 8!</div>
+
+    <!--Width-->
+    <ion-item [class.error]="!width.valid && width.touched">
+      <ion-label>Width</ion-label>
+      <ion-input type="text" value="" [ngFormControl]="width"></ion-input>
+    </ion-item>
+    <div *ngIf="width.hasError('required') && width.touched" class="error-box" padding-left>* Width is required</div>
+    <div *ngIf="width.hasError('pattern') && width.touched" class="error-box" padding-left>* Minimum width length is 8!</div>
+
+    <!--mouldingSize-->
+    <ion-item [class.error]="!mouldingSize.valid && mouldingSize.touched">
+      <ion-label>Moulding Size</ion-label>
+      <ion-input type="text" value="" [ngFormControl]="mouldingSize"></ion-input>
+    </ion-item>
+    <div *ngIf="mouldingSize.hasError('required') && mouldingSize.touched" class="error-box" padding-left>* Moulding size is required!</div>
+    <div *ngIf="mouldingSize.hasError('pattern') && mouldingSize.touched" class="error-box" padding-left>* Minimum moulding size length is 8!</div>
+
+    <!--glass-->
+    <ion-item [class.error]="!onGlass.valid && onGlass.touched">
+      <ion-label>Glass</ion-label>
+      <ion-toggle [ngFormControl]="onGlass"></ion-toggle>
+    </ion-item>
+
+    <!--Lamination-->
+    <ion-item [class.error]="!needsLamination.valid && needsLamination.touched">
+      <ion-label>Lamination</ion-label>
+      <ion-toggle [ngFormControl]="needsLamination"></ion-toggle>
+    </ion-item>
+
+    <!--Collage-->
+    <ion-item [class.error]="!isCollage.valid && isCollage.touched">
+      <ion-label>Collage</ion-label>
+      <ion-toggle [ngFormControl]="isCollage"></ion-toggle>
+    </ion-item>
+
+    <!--totalSnaps-->
+    <div *ngIf="!isCollage">
+      <ion-item [class.error]="!totalSnaps.valid && totalSnaps.touched">
+        <ion-label>Total Snaps</ion-label>
+        <ion-input type="text" value="" [ngFormControl]="totalSnaps"></ion-input>
+      </ion-item>
+      <div *ngIf="totalSnaps.hasError('required') && totalSnaps.touched" class="error-box" padding-left>* Total snaps is required!</div>
+      <div *ngIf="totalSnaps.hasError('pattern') && totalSnaps.touched" class="error-box" padding-left>* Minimum total snaps length is 8!</div>
+    </div>
+    <!--totalAmount-->
+    <!--frameCost-->
+
+    <!--spacer-->
+    <br/><br/>
+
+    <!--Submit-->
+    <button type="submit" class="custom-button" [disabled]="!calculatorForm.valid" block>Submit</button>
+
+    <!--spacer-->
+    <br/><br/>
+
+    <ion-item>
+      <ion-avatar item-left>
+        <img src="{{authDataProfileImage}}" />
+      </ion-avatar>
+      {{authDataProfileName}}
+      <button primary clear danger item-right (click)="unauthWithGoogle()">
+            <div><strong>Logout</strong></div>
+        </button>
+    </ion-item>
+
+  </form>
+
+  <!--<ion-card [hidden]="!isLoggedIn">
+    <ion-card-header>
+      <h1 style="text-align: center;"><strong>{{authDataProfileName}}</strong></h1>
+    </ion-card-header>
+    <img src="{{authDataProfileImage}}" style="width: 300px; margin: 0 auto;" />
+
+    <ion-item>
+      <button primary clear danger item-right (click)="unauthWithGoogle()">
+            <icon ionic></icon>
+            <div><strong>Logout</strong></div>
+        </button>
+    </ion-item>
+  </ion-card>-->
+
+</ion-content>
