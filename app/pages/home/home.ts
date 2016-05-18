@@ -1,85 +1,83 @@
 import {Page} from 'ionic-angular';
 import {Component} from 'angular2/core';
-import {FORM_DIRECTIVES, FormBuilder, ControlGroup, Validators, AbstractControl} from 'angular2/common';
+import {FormBuilder, ControlGroup, Control, Validators} from 'angular2/common';
 import {SettingsPage} from '../settings/settings'
+import {FirebaseService} from '../../providers/firebase-service/firebase-service';
 
 @Page({
   templateUrl: 'build/pages/home/home.html',
-  directives: [FORM_DIRECTIVES]
+  providers: [FirebaseService]
 })
 export class HomePage {
 
-  messagesRef: Firebase; // Initialized Firebase object
+  // messagesRef: Firebase; // Initialized Firebase object
   isLoggedIn: boolean;   // Was authentification sucesfull
-  authData: any;         // Object that holds Twitter authentification data (displayName, imageURL, etc.)
+  // authData: any;         // Object that holds Twitter authentification data (displayName, imageURL, etc.)
 
   authDataProfileName: string;        // Profile name
   authDataProfileImage: string;       // Profile image
 
   calculatorForm: ControlGroup;
-  height: AbstractControl;
-  width: AbstractControl;
-  mouldingSize: AbstractControl;
-  onGlass: AbstractControl;
-  needsLamination: AbstractControl;
-  isCollage: AbstractControl;
-  totalSnaps: AbstractControl;
-  totalAmount: AbstractControl;
-  frameCost: AbstractControl;
+  height: Control;
+  width: Control;
+  mouldingSize: Control;
+  onGlass: Control;
+  needsLamination: Control;
+  isCollage: Control;
+  totalSnaps: Control;
+  totalAmount: Control;
+  frameCost: Control;
 
   settingsPage: any;
 
-  constructor(fb: FormBuilder) {
-    this.messagesRef = new Firebase("https://fototrans-calculator.firebaseio.com/");
+  // submitted = false;
+  // calculator = new Calculator(0, 0, 0, false, true, false, 0, 0, 0);
+  // TODO: Remove this when we're done
+  get diagnostic() { return JSON.stringify(this.isCollage.value); }
 
-    this.messagesRef.onAuth((user) => {
-      if (user) {
-        this.authData = user; // Set retrieved Twitter profile data
+  // constructor() {
+  constructor(private builder: FormBuilder, private firebaseService: FirebaseService) {
 
-        this.authDataProfileImage = this.authData.google.profileImageURL.replace(/\_normal/, "");   // Get profile name
-        this.authDataProfileName = this.authData.google.displayName;                                // Get profile image
+    
+    
+    this.height = new Control('', Validators.required);
+    this.width = new Control('', Validators.required);
+    this.mouldingSize = new Control('', Validators.required);
+    this.onGlass = new Control(false);
+    this.needsLamination = new Control(false);
+    this.isCollage = new Control(false);
+    this.totalSnaps = new Control();
+    this.totalAmount = new Control();
 
-        this.isLoggedIn = true; // Set authentification was sucesfull
-      }
+    this.calculatorForm = builder.group({
+      height: this.height,
+      width: this.width,
+      mouldingSize: this.mouldingSize,
+      onGlass: this.onGlass,
+      needsLamination: this.needsLamination,
+      isCollage: this.isCollage,
+      totalSnaps: this.totalSnaps,
+      totalAmount: this.totalAmount
     });
-
-    this.calculatorForm = fb.group({
-      'height': ['', Validators.compose([Validators.required])],
-      'width': ['', Validators.compose([Validators.required])],
-      'mouldingSize': ['', Validators.compose([Validators.required])],
-      'onGlass': ['false'],
-      'needsLamination': ['false'],
-      'isCollage': ['false'],
-      'totalSnaps': ['', Validators.compose([Validators.required])]
-    });
-
-    this.height = this.calculatorForm.controls['height'];
-    this.width = this.calculatorForm.controls['width'];
-    this.mouldingSize = this.calculatorForm.controls['mouldingSize'];
-    this.onGlass = this.calculatorForm.controls['onGlass'];
-    this.needsLamination = this.calculatorForm.controls['needsLamination'];
-    this.isCollage = this.calculatorForm.controls['isCollage'];
-    this.totalSnaps = this.calculatorForm.controls['totalSnaps'];
 
     this.settingsPage = SettingsPage;
   }
 
   authWithGoogle() {
-    this.messagesRef.authWithOAuthPopup("google", (error) => {
-      if (error) {
-        console.log(error);
-      }
-    });
+    this.firebaseService.login();
+    this.isLoggedIn = true;
+    this.authDataProfileImage = this.firebaseService.authData.google.profileImageURL.replace(/\_normal/, "");
+    this.authDataProfileName = this.firebaseService.authData.google.displayName;
   }
 
   unauthWithGoogle() {
-    this.messagesRef.unauth();
+    this.firebaseService.logout();
     this.isLoggedIn = false;
   }
 
   onSubmit(value: string): void {
     if (this.calculatorForm.valid) {
-      console.log('Submitted value: ', value);
+      console.log('Submitted value: ', JSON.stringify(value));
     }
   }
 }

@@ -8,6 +8,18 @@
   <ion-title>Settings</ion-title>
 </ion-navbar>
 
-<ion-content padding class="settings">
-
+<ion-content class="settings">
+  <form [ngFormModel]="settingsForm">
+    
+    <ion-item>
+      <ion-label>Glass</ion-label>
+      <ion-input type="number" [ngFormControl]="glassCost"></ion-input>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label>Lamination</ion-label>
+      <ion-input type="number" [ngFormControl]="laminationCost"></ion-input>
+    </ion-item>
+  
+  </form>
 </ion-content>
